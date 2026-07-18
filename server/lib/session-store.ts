@@ -77,6 +77,14 @@ export function getSession(sessionId: string): Session | undefined {
   return sessions.get(sessionId);
 }
 
+export function getSessionByShareCode(code: string): Session | undefined {
+  const upper = code.trim().toUpperCase();
+  for (const s of sessions.values()) {
+    if (s.shareCode === upper) return s;
+  }
+  return undefined;
+}
+
 // Append an event: assigns a monotonic seq + timestamp, caps the log.
 export function appendEvent(session: Session, body: WBEventBody): WBEvent {
   session.seq += 1;
