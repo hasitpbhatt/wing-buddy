@@ -1,0 +1,34 @@
+import { setupServer } from "msw/node";
+import { http, HttpResponse } from "msw";
+
+// Default hermetic handlers for the external services the server talks to.
+// Individual tests can override with `server.use(...)`.
+export const handlers = [
+  // Vocal Bridge — ephemeral connection token mint.
+  http.post("https://vocalbridgeai.com/api/v1/token", async ({ request }) => {
+    const apiKey = request.headers.get("x-api-key");
+    if (!apiKey) {
+      return HttpResponse.json({ error: "missing X-API-Key" }, { status: 401 });
+    }
+    const body = (await request.json().catch(() => ({}))) as {
+      participant_name?: string;
+      room_name?: string;
+    };
+    return HttpResponse.json({
+      token: `vb-test-token-${body.participant_name ?? "anon"}`,
+      room_name: body.room_name ?? "vb-test-room",
+      url: "wss://vocalbridgeai.test",
+    });
+  }),
+
+  // Sabre — OAuth2 token endpoint (cert + prod hosts).
+  http.post(/\/v2\/auth\/token$/, () =>
+    HttpResponse.json({
+      access_token: "sabre-test-access-token",
+      token_type: "bearer",
+      expires_in: 604800,
+    })
+  ),
+];
+
+export const server = setupServer(...handlers);
