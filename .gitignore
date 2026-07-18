@@ -28,6 +28,20 @@ data/
 .vocal-bridge/
 **/.vocal-bridge/
 
+# build-time merge artifacts (copied from server/ — never commit these into client/)
+client/app/api/
+client/lib/access.ts
+client/lib/brain.ts
+client/lib/events.ts
+client/lib/facilities.ts
+client/lib/request-auth.ts
+client/lib/sabre.ts
+client/lib/session-store.ts
+client/lib/translate.ts
+client/lib/vocalbridge.ts
+client/lib/withCors.ts
+client/lib/__tests__/
+
 # vercel / cloud
 .vercel
 

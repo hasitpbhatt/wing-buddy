@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
 import { getSession, getSessionByShareCode } from "@/lib/session-store";
 import { verifyAccessToken, verifyPin, signAccessToken } from "@/lib/access";
-import { withCors, corsPreflight } from "@/lib/withCors";
 
 export const dynamic = "force-dynamic";
 
 // Verify joiner access. Primary: a signed `t` link. Fallback: shareCode (+ PIN
-// if the requester opted in). On success returns { sessionId, verified, t } —
-// a fresh token the joiner uses for voice-token / state / events.
-export const POST = withCors(async (req: Request) => {
+// if the requester opted in). On success returns { sessionId, verified, `t` —
+// a token the joiner uses for voice-token / state / events.
+export async function POST(req: Request) {
   let body: { t?: string; shareCode?: string; pin?: string };
   try {
     body = (await req.json()) as typeof body;
@@ -44,6 +43,4 @@ export const POST = withCors(async (req: Request) => {
   }
 
   return NextResponse.json({ error: "t or shareCode required" }, { status: 400 });
-});
-
-export const OPTIONS = corsPreflight;
+}

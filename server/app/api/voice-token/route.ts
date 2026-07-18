@@ -2,11 +2,10 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session-store";
 import { verifyRequesterKey, verifyAccessToken } from "@/lib/access";
 import { mintVoiceToken } from "@/lib/vocalbridge";
-import { withCors, corsPreflight } from "@/lib/withCors";
 
 export const dynamic = "force-dynamic";
 
-export const GET = withCors(async (req: Request) => {
+export async function GET(req: Request) {
   const url = new URL(req.url);
   const sessionId = url.searchParams.get("sessionId");
   const role = url.searchParams.get("role");
@@ -54,6 +53,4 @@ export const GET = withCors(async (req: Request) => {
       { status: 502 }
     );
   }
-});
-
-export const OPTIONS = corsPreflight;
+}

@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession, appendEvent, mutateSession } from "@/lib/session-store";
 import { sessionIdFromT } from "@/lib/request-auth";
-import { withCors, corsPreflight } from "@/lib/withCors";
-
 export const dynamic = "force-dynamic";
 
 type DisruptKind = "gate_change" | "delay";
@@ -11,7 +9,7 @@ type DisruptKind = "gate_change" | "delay";
 // SILENTLY drops the wheelchair SSR (no ssr_update event) — the agent notices
 // on its next re-check (M3) and re-adds it. Emits flight_event + flight_update
 // only; the dashboard re-hydrates /state to see ssr:"dropped" (badge -> warn).
-export const POST = withCors(async (req: Request) => {
+export async function POST(req: Request) {
   const url = new URL(req.url);
   const sessionId = sessionIdFromT(url);
   if (!sessionId) {
@@ -56,6 +54,4 @@ export const POST = withCors(async (req: Request) => {
     ssr: session.ssr,
     seq: session.seq,
   });
-});
-
-export const OPTIONS = corsPreflight;
+}

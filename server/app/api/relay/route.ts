@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 import { getSession, appendEvent } from "@/lib/session-store";
 import { sessionIdFromT } from "@/lib/request-auth";
-import { withCors, corsPreflight } from "@/lib/withCors";
-
 export const dynamic = "force-dynamic";
 
 // Joiner types a message; we append a family_message event. The requester client
 // picks it up on poll and converts it into an app->agent client action, which
 // the hosted VB agent relays to the traveler in Hindi (CLAUDE.md rule 4b).
-export const POST = withCors(async (req: Request) => {
+export async function POST(req: Request) {
   const url = new URL(req.url);
   const sessionId = sessionIdFromT(url);
   if (!sessionId) {
@@ -34,6 +32,4 @@ export const POST = withCors(async (req: Request) => {
 
   const event = await appendEvent(session, { type: "family_message", text });
   return NextResponse.json({ ok: true, seq: event.seq }, { status: 201 });
-});
-
-export const OPTIONS = corsPreflight;
+}

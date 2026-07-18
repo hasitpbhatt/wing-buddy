@@ -3,8 +3,6 @@ import { createSession, type Flight } from "@/lib/session-store";
 import { signAccessToken, hashPin } from "@/lib/access";
 import { seedFlight } from "@/lib/sabre";
 import { sabreMode } from "@/lib/sabre";
-import { withCors, corsPreflight } from "@/lib/withCors";
-
 export const dynamic = "force-dynamic";
 
 // Deterministic fallback flight if real Sabre seeding fails (plan §Sabre).
@@ -20,7 +18,7 @@ const FALLBACK_FLIGHT: Flight = {
   delayMin: 0,
 };
 
-export const POST = withCors(async (req: Request) => {
+export async function POST(req: Request) {
   let pin: string | undefined;
   try {
     const body = (await req.json()) as { pin?: string } | null;
@@ -61,6 +59,4 @@ export const POST = withCors(async (req: Request) => {
     },
     { status: 201 }
   );
-});
-
-export const OPTIONS = corsPreflight;
+}

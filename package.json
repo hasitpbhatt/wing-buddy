@@ -3,10 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm --prefix client run dev",
-    "build": "npm --prefix client run build",
+    "dev": "npm run merge && npm --prefix client run dev",
+    "build": "npm run merge && npm --prefix client run build",
     "start": "npm --prefix client run start",
-    "lint": "npm --prefix client run lint"
+    "test": "npm --prefix client run test",
+    "lint": "npm --prefix client run lint",
+    "typecheck": "npm --prefix client run typecheck",
+    "merge": "node scripts/merge.mjs",
+    "postinstall": "npm --include=dev --prefix client install"
   },
   "dependencies": {
     "@vocalbridgeai/react": "^0.1.1",

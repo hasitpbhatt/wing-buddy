@@ -2,14 +2,13 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session-store";
 import { hasRequesterKey } from "@/lib/request-auth";
 import { handleQuery } from "@/lib/brain";
-import { withCors, corsPreflight } from "@/lib/withCors";
 
 export const dynamic = "force-dynamic";
 
 // The brain. Reached via the SDK delegation path: hosted VB agent -> the
 // requester client's onAIAgentQuery -> POST /api/agent {sessionId, query} ->
 // {answer} (Hindi) -> spoken. No server->VB webhook.
-export const POST = withCors(async (req: Request) => {
+export async function POST(req: Request) {
   let body: { sessionId?: string; query?: string };
   try {
     body = (await req.json()) as typeof body;
@@ -32,6 +31,4 @@ export const POST = withCors(async (req: Request) => {
 
   const { intent, answer } = await handleQuery(session, query);
   return NextResponse.json({ answer, intent, ssr: session.ssr, seq: session.seq });
-});
-
-export const OPTIONS = corsPreflight;
+}
