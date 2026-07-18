@@ -9,10 +9,16 @@
 
 const VB_TOKEN_URL = "https://vocalbridgeai.com/api/v1/token";
 
+/** Shape expected by @vocalbridgeai/sdk TokenResponse (+ camelCase aliases). */
 export interface VoiceToken {
   token: string;
-  roomName?: string;
-  url?: string;
+  url: string;
+  room_name: string;
+  participant_identity: string;
+  expires_in: number;
+  agent_mode?: string;
+  /** Legacy alias kept for existing clients/tests */
+  roomName: string;
 }
 
 export async function mintVoiceToken(params: {
@@ -50,6 +56,27 @@ export async function mintVoiceToken(params: {
     token: string;
     room_name?: string;
     url?: string;
+    livekit_url?: string;
+    participant_identity?: string;
+    expires_in?: number;
+    agent_mode?: string;
   };
-  return { token: data.token, roomName: data.room_name, url: data.url };
+  // VB returns `livekit_url`; the SDK accepts `url || livekit_url`.
+  const url = data.url ?? data.livekit_url;
+  if (!data.token || !url) {
+    throw new Error(
+      `VB token response missing token or url (keys: ${Object.keys(data).join(",")})`
+    );
+  }
+  const room_name = data.room_name ?? params.roomName;
+  return {
+    token: data.token,
+    url,
+    room_name,
+    roomName: room_name,
+    participant_identity:
+      data.participant_identity ?? params.participantName,
+    expires_in: data.expires_in ?? 3600,
+    agent_mode: data.agent_mode,
+  };
 }

@@ -55,8 +55,11 @@ export default function HelpClient() {
         lang: "hi",
         text: trimmed,
       });
-    } catch {
-      /* transient — next line still worth sending */
+    } catch (e) {
+      console.error("[transcript]", e);
+      setVoiceWarning(
+        e instanceof Error ? e.message : "Could not sync transcript to family view"
+      );
     }
   }
 
@@ -118,8 +121,12 @@ export default function HelpClient() {
         streamRef.current = null;
       }
 
-      await connectVoice(created);
+      const voiceOk = await connectVoice(created);
       setState("connected");
+      if (!voiceOk) {
+        // Session/share still usable; voiceWarning already set in connectVoice.
+        console.error("[voice] connected session without live agent");
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
       await teardownVoice();
@@ -133,7 +140,7 @@ export default function HelpClient() {
     }
   }
 
-  async function connectVoice(created: CreatedSession) {
+  async function connectVoice(created: CreatedSession): Promise<boolean> {
     const vb = new VocalBridge({
       auth: {
         tokenProvider: async () => {
@@ -174,6 +181,7 @@ export default function HelpClient() {
       },
       participantName: "requester",
       sessionId: created.sessionId,
+      debug: true,
     });
 
     vb.on("transcript", (entry) => {
@@ -221,6 +229,7 @@ export default function HelpClient() {
     try {
       await vb.connect();
       vbRef.current = vb;
+      return true;
     } catch (e) {
       vbRef.current = null;
       try {
@@ -228,13 +237,13 @@ export default function HelpClient() {
       } catch {
         /* ignore */
       }
-      // Session + share still work; joiner just won't see live speech lines
-      // until voice is up. Surface a non-fatal warning.
+      // Session + share still work; joiner won't see live speech without voice.
       setVoiceWarning(
         e instanceof Error
           ? e.message
           : "Voice could not connect — share still works, transcript needs voice."
       );
+      return false;
     }
   }
 

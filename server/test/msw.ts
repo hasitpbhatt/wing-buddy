@@ -18,6 +18,8 @@ export const handlers = [
       token: `vb-test-token-${body.participant_name ?? "anon"}`,
       room_name: body.room_name ?? "vb-test-room",
       url: "wss://vocalbridgeai.test",
+      participant_identity: body.participant_name ?? "anon",
+      expires_in: 3600,
     });
   }),
 

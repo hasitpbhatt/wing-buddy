@@ -79,6 +79,9 @@ describe("GET /api/voice-token", () => {
         const body = await res.json();
         expect(body.token).toContain("vb-test-token-requester");
         expect(body.roomName).toBe(s.roomName);
+        expect(body.url).toBeTruthy();
+        expect(body.livekit_url).toBe(body.url);
+        expect(body.room_name).toBe(s.roomName);
       },
     });
   });

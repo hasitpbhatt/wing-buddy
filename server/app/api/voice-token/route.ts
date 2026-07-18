@@ -41,10 +41,17 @@ export async function GET(req: Request) {
       participantName: role,
       roomName: session.roomName,
     });
+    // SDK TokenResponse: url (or livekit_url), token, room_name, …
+    // Plus legacy camelCase aliases used by older clients/tests.
     return NextResponse.json({
       token: voice.token,
-      roomName: voice.roomName ?? session.roomName,
       url: voice.url,
+      livekit_url: voice.url,
+      room_name: voice.room_name,
+      roomName: voice.roomName,
+      participant_identity: voice.participant_identity,
+      expires_in: voice.expires_in,
+      agent_mode: voice.agent_mode,
       role,
     });
   } catch (err) {
