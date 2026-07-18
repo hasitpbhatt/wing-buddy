@@ -1,0 +1,5 @@
+{
+  "stt_model": "whisper-large-v3",
+  "tts_voice": "shimmer",
+  "temperature": 0.3
+}

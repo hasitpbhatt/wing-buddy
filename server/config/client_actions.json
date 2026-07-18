@@ -1,0 +1,19 @@
+[
+  {
+    "name": "flight_update",
+    "description": "The traveler's booking changed (gate change or delay). Re-check the booking and tell the traveler, in one calm Hindi sentence, the new gate and that the wheelchair is confirmed again.",
+    "direction": "app_to_agent",
+    "behavior": "respond"
+  },
+  {
+    "name": "family_message",
+    "description": "A message from the traveler's family member. Relay it verbatim in Hindi, prefixed with the family member's name.",
+    "direction": "app_to_agent",
+    "behavior": "respond"
+  },
+  {
+    "name": "show_status",
+    "description": "Show or update a status card on the app UI (flight, wheelchair, or facility).",
+    "direction": "agent_to_app"
+  }
+]

@@ -8,6 +8,14 @@
 
 ---
 
+## Spike Verdicts (server build)
+
+- **Spike A — shared-room 3-way: ❌ NOT available via VB's token API.** `POST https://vocalbridgeai.com/api/v1/token` ignores a caller-supplied `room_name` and returns a per-user room (`user-<u>-agent-<a>-api-<k>`). Two participants get two rooms — they cannot share one. **→ Use relay mode** (joiner types → `family_message` event → the hosted agent voices it to the traveler in Hindi). Relay ships regardless; the client dev should not build a shared-room "Join Call". (If true audio 3-way is ever needed, it requires a VB feature we don't have — out of scope.)
+- **Spike B — Hindi end-to-end: PENDING (browser+mic).** Server side is ready: VB agent `WingBuddy` (id `bc498d9b-…`) configured with STT `hi`, TTS `eleven_multilingual_v2`, Hindi prompt + disclosure greeting, client-actions, and Bring-Your-Own-Agent (verbatim) delegating to `/api/agent`. Token mint verified live (HTTP 200). The one live utterance round-trip needs the client + a mic — validate in the browser.
+- **Real integrations wired:** Anthropic translate (claude-haiku-4-5) verified live; Vocal Bridge token mint verified live. Sabre real transport still pending PCC + test PNR.
+
+---
+
 ## 1. Locked Decisions (amended)
 
 | Decision            | Choice                                                                                     |
